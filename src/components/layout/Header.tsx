@@ -26,7 +26,8 @@ export function Header() {
             <span className="relative text-xl font-black text-white">K</span>
           </div>
           <span className="font-black text-xl tracking-tight">
-            <span className="text-white">🔥 KPOP GLOBAL 2026</span>
+            <span className="text-white">KPOP</span>
+            <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-400 bg-clip-text text-transparent"> Global</span>
           </span>
         </Link>
 
