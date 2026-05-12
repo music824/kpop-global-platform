@@ -37,6 +37,14 @@
   html {
     @apply scroll-smooth;
   }
+  /* Global link styles - remove default blue and underline */
+  a {
+    @apply text-foreground no-underline;
+    color: inherit;
+  }
+  a:hover {
+    color: inherit;
+  }
 }
 
 /* KPOP Gradient Text */
