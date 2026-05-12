@@ -1,33 +1,36 @@
 'use client'
 
 import { useState } from 'react'
+import useSWR from 'swr'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/client'
+import type { Database } from '@/lib/supabase/types'
 
-// Mock data
-const artists = [
-  { id: '1', name: 'BTS', nameEn: 'Bangtan Boys', agency: 'HYBE', memberCount: 7, hotScore: 9999, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1614644147798-f8c0fc9da7f6?w=300&h=300&fit=crop', tags: ['防弹少年团', 'Kpop', '男子团体'] },
-  { id: '2', name: 'BLACKPINK', nameEn: 'BLACKPINK', agency: 'YG', memberCount: 4, hotScore: 9850, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1598387181032-a3103a2db5b3?w=300&h=300&fit=crop', tags: ['粉墨', 'Kpop', '女子团体'] },
-  { id: '3', name: 'Stray Kids', nameEn: 'Stray Kids', agency: 'JYP', memberCount: 8, hotScore: 9720, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&h=300&fit=crop', tags: ['迷路孩子', 'Kpop', '男团'] },
-  { id: '4', name: 'NewJeans', nameEn: 'NewJeans', agency: 'HYBE', memberCount: 5, hotScore: 9600, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=300&h=300&fit=crop', tags: ['鲸鱼', 'Kpop', '女团'] },
-  { id: '5', name: 'TWICE', nameEn: 'TWICE', agency: 'JYP', memberCount: 9, hotScore: 9450, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1516280440614-6697288d5d38?w=300&h=300&fit=crop', tags: ['两次', 'Kpop', '女团'] },
-  { id: '6', name: 'IVE', nameEn: 'IVE', agency: 'Starship', memberCount: 6, hotScore: 9300, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=300&h=300&fit=crop', tags: ['爱豆', 'Kpop', '女团'] },
-  { id: '7', name: '(G)I-DLE', nameEn: '(G)I-DLE', agency: 'CUBE', memberCount: 6, hotScore: 8800, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=300&h=300&fit=crop', tags: ['田小娟', 'Kpop', '女团'] },
-  { id: '8', name: 'aespa', nameEn: 'aespa', agency: 'SM', memberCount: 4, hotScore: 8700, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&h=300&fit=crop', tags: ['艾尔', 'Kpop', '女团'] },
-  { id: '9', name: 'LE SSERAFIM', nameEn: 'LE SSERAFIM', agency: 'Source Music', memberCount: 5, hotScore: 8600, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=300&h=300&fit=crop', tags: ['宫胁咲良', 'Kpop', '女团'] },
-  { id: '10', name: 'NCT', nameEn: 'NCT', agency: 'SM', memberCount: 23, hotScore: 8500, country: '韩国', profileImage: 'https://images.unsplash.com/photo-1598387181032-a3103a2db5b3?w=300&h=300&fit=crop', tags: ['耐克', 'Kpop', '男团'] },
-]
+type Artist = Database['public']['Tables']['artists']['Row']
+
+const supabase = createClient()
+
+const fetcher = async (): Promise<Artist[]> => {
+  const { data, error } = await supabase
+    .from('artists')
+    .select('*')
+    .order('hot_score', { ascending: false })
+  if (error) throw error
+  return data || []
+}
 
 export default function ArtistsPage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const { data: artists, error, isLoading } = useSWR('artists-list', fetcher)
 
-  const filteredArtists = artists.filter(artist =>
-    artist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    artist.nameEn.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredArtists = (artists || []).filter((artist) =>
+    (artist.name_zh || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (artist.name_en || '').toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
@@ -56,62 +59,86 @@ export default function ArtistsPage() {
           </div>
         </div>
 
+        {error && (
+          <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-400">
+            加载失败: {error.message}
+          </div>
+        )}
+
         {/* Artists Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {filteredArtists.map((artist, index) => (
-            <Card key={artist.id} className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
-              <CardContent className="p-4">
-                {/* Avatar with Rank */}
-                <div className="relative mb-4">
-                  <Avatar
-                    src={artist.profileImage}
-                    alt={artist.name}
-                    fallback={artist.name.charAt(0)}
-                    className="h-28 w-28 mx-auto"
-                  />
-                  <div className={`absolute -top-1 -left-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-                    index === 0 ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white' :
-                    index === 1 ? 'bg-gradient-to-r from-gray-400 to-gray-300 text-black' :
-                    index === 2 ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white' :
-                    'bg-secondary text-muted-foreground'
-                  }`}>
-                    {index + 1}
+        {isLoading ? (
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {[...Array(8)].map((_, i) => (
+              <Card key={i} className="border-border/50 bg-card/50">
+                <CardContent className="p-4">
+                  <div className="h-28 w-28 mx-auto mb-4 rounded-full bg-secondary animate-pulse" />
+                  <div className="h-5 w-24 mx-auto mb-2 bg-secondary rounded animate-pulse" />
+                  <div className="h-4 w-16 mx-auto bg-secondary rounded animate-pulse" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : filteredArtists.length === 0 ? (
+          <div className="py-20 text-center">
+            <p className="text-muted-foreground">暂无艺人数据</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {filteredArtists.map((artist, index) => (
+              <Card key={artist.id} className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
+                <CardContent className="p-4">
+                  {/* Avatar with Rank */}
+                  <div className="relative mb-4">
+                    <Avatar
+                      src={artist.profile_image || ''}
+                      alt={artist.name_zh || artist.name_en || ''}
+                      fallback={(artist.name_zh || artist.name_en || '?').charAt(0)}
+                      className="h-28 w-28 mx-auto"
+                    />
+                    <div className={`absolute -top-1 -left-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
+                      index === 0 ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white' :
+                      index === 1 ? 'bg-gradient-to-r from-gray-400 to-gray-300 text-black' :
+                      index === 2 ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white' :
+                      'bg-secondary text-muted-foreground'
+                    }`}>
+                      {index + 1}
+                    </div>
                   </div>
-                </div>
 
-                {/* Name */}
-                <div className="text-center">
-                  <h3 className="font-bold text-white group-hover:text-purple-400 transition-colors">
-                    {artist.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{artist.nameEn}</p>
-                </div>
+                  {/* Name */}
+                  <div className="text-center">
+                    <h3 className="font-bold text-white group-hover:text-purple-400 transition-colors">
+                      {artist.name_zh || artist.name_en}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{artist.name_en}</p>
+                  </div>
 
-                {/* Info */}
-                <div className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                  <span>{artist.agency}</span>
-                  <span>·</span>
-                  <span>{artist.memberCount}人</span>
-                </div>
+                  {/* Info */}
+                  <div className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                    <span>{artist.agency}</span>
+                    <span>·</span>
+                    <span>{artist.member_count}人</span>
+                  </div>
 
-                {/* Tags */}
-                <div className="mt-3 flex flex-wrap justify-center gap-1">
-                  {artist.tags.slice(0, 2).map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
-                  ))}
-                </div>
+                  {/* Tags */}
+                  <div className="mt-3 flex flex-wrap justify-center gap-1">
+                    {(artist.tags || []).slice(0, 2).map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                    ))}
+                  </div>
 
-                {/* Hot Score */}
-                <div className="mt-4 flex items-center justify-center gap-1 text-orange-400">
-                  <span>🔥</span>
-                  <span className="text-sm font-semibold">{artist.hotScore.toLocaleString()}</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  {/* Hot Score */}
+                  <div className="mt-4 flex items-center justify-center gap-1 text-orange-400">
+                    <span>🔥</span>
+                    <span className="text-sm font-semibold">{(artist.hot_score || 0).toLocaleString()}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
-        {filteredArtists.length === 0 && (
+        {artists && filteredArtists.length === 0 && searchQuery && (
           <div className="py-20 text-center">
             <p className="text-muted-foreground">未找到匹配的艺人</p>
           </div>
