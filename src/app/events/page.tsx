@@ -122,7 +122,6 @@ export default function EventsPage() {
                   <div className="h-4 w-32 bg-secondary rounded animate-pulse" />
                 </CardContent>
               </Card>
-              </Link>
             ))}
           </div>
         ) : filteredEvents.length === 0 ? (
