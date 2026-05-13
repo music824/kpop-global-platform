@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import useSWR from 'swr'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -119,6 +120,7 @@ export default function EventsPage() {
                   <div className="h-4 w-32 bg-secondary rounded animate-pulse" />
                 </CardContent>
               </Card>
+              </Link>
             ))}
           </div>
         ) : filteredEvents.length === 0 ? (
@@ -128,10 +130,11 @@ export default function EventsPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredEvents.map((event) => (
-              <Card key={event.id} className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
+              <Link href={`/events/${event.id}`}>
+                <Card key={event.id} className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
                 <div className="relative aspect-video">
                   <img
-                    src={event.poster_image || ''}
+                    src={event.poster_image || 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800'}
                     alt={event.title || ''}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -157,6 +160,7 @@ export default function EventsPage() {
                   </div>
                 </CardContent>
               </Card>
+              </Link>
             ))}
           </div>
         )}

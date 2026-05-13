@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import useSWR from 'swr'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -85,12 +86,14 @@ export default function ArtistsPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {filteredArtists.map((artist, index) => (
-              <Card key={artist.id} className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
+              <Link href={`/artists/${artist.id}`}>
+                <Card key={artist.id} className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
+              
                 <CardContent className="p-4">
                   {/* Avatar with Rank */}
                   <div className="relative mb-4">
                     <Avatar
-                      src={artist.profile_image || ''}
+                      src={artist.profile_image || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400'}
                       alt={artist.name_zh || artist.name_en || ''}
                       fallback={(artist.name_zh || artist.name_en || '?').charAt(0)}
                       className="h-28 w-28 mx-auto"
@@ -134,6 +137,7 @@ export default function ArtistsPage() {
                   </div>
                 </CardContent>
               </Card>
+              </Link>
             ))}
           </div>
         )}

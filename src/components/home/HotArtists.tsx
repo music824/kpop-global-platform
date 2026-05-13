@@ -56,13 +56,13 @@ export function HotArtists() {
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {hotArtists?.map((artist, index) => (
-              <Link key={artist.id} href={`/artists/${artist.slug || artist.id}`}>
+              <Link key={artist.id} href={`/artists/${artist.id}`}>
                 <Card className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50 hover:bg-card">
                   <CardContent className="p-3">
                     {/* Avatar with Rank */}
                     <div className="relative mb-3">
                       <Avatar
-                        src={artist.profile_image || ''}
+                        src={artist.profile_image || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400'}
                         alt={artist.name_zh || artist.name_en || ''}
                         fallback={(artist.name_zh || artist.name_en || '?').charAt(0)}
                         className="h-20 w-20 mx-auto"
