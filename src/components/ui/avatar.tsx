@@ -11,10 +11,20 @@ const DEFAULT_AVATAR = 'https://images.unsplash.com/photo-1516450360452-9312f5e8
 
 const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
   ({ className, src, alt, fallback, ...props }, ref) => {
-    const [hasError, setHasError] = React.useState(false)
+    const [imgSrc, setImgSrc] = React.useState<string | null>(null)
 
-    // Check if src is valid (not empty, not just whitespace)
-    const validSrc = src && src.trim() !== '' ? src : null
+    React.useEffect(() => {
+      // Reset when src changes
+      if (src && src.trim() !== '') {
+        setImgSrc(src)
+      } else {
+        setImgSrc(DEFAULT_AVATAR)
+      }
+    }, [src])
+
+    const handleError = () => {
+      setImgSrc(DEFAULT_AVATAR)
+    }
 
     return (
       <div
@@ -25,12 +35,12 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         )}
         {...props}
       >
-        {validSrc && !hasError ? (
+        {imgSrc ? (
           <img
             className="aspect-square h-full w-full object-cover"
-            src={validSrc}
+            src={imgSrc}
             alt={alt || 'Avatar'}
-            onError={() => setHasError(true)}
+            onError={handleError}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#8B5CF6] to-[#EC4899] text-white font-semibold text-sm">
