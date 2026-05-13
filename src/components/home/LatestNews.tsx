@@ -33,6 +33,8 @@ const typeColors: Record<string, string> = {
   event: 'bg-green-500/20 text-green-400 border-green-500/30',
 }
 
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800'
+
 export function LatestNews() {
   const { data: latestNews, error, isLoading } = useSWR('latest-news', fetcher)
 
@@ -85,11 +87,11 @@ export function LatestNews() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
             {/* Featured News */}
-            <Link href={`/news/${latestNews[0].slug || latestNews[0].id}`}>
+            <Link href={`/news/${latestNews[0].id}`}>
               <Card className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
                 <div className="relative aspect-video">
                   <img
-                    src={latestNews[0].image_url || ''}
+                    src={latestNews[0].image_url || DEFAULT_IMAGE}
                     alt={latestNews[0].title || ''}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
@@ -117,12 +119,12 @@ export function LatestNews() {
             {/* News List */}
             <div className="space-y-4">
               {latestNews.slice(1).map((news) => (
-                <Link key={news.id} href={`/news/${news.slug || news.id}`}>
+                <Link key={news.id} href={`/news/${news.id}`}>
                   <Card className="group cursor-pointer border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
                     <CardContent className="flex gap-4 p-4">
                       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
                         <img
-                          src={news.image_url || ''}
+                          src={news.image_url || DEFAULT_IMAGE}
                           alt={news.title || ''}
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                         />
