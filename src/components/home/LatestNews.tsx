@@ -94,6 +94,7 @@ export function LatestNews() {
                     src={latestNews[0].image_url || DEFAULT_IMAGE}
                     alt={latestNews[0].title || ''}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => { e.currentTarget.src = DEFAULT_IMAGE }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                   <Badge className={`absolute left-4 top-4 border ${typeColors[latestNews[0].news_type || 'event']}`}>
@@ -127,6 +128,7 @@ export function LatestNews() {
                           src={news.image_url || DEFAULT_IMAGE}
                           alt={news.title || ''}
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          onError={(e) => { e.currentTarget.src = DEFAULT_IMAGE }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">

@@ -92,6 +92,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
             src={news.image_url || DEFAULT_IMAGE}
             alt={news.title || ''}
             className="h-full w-full object-cover"
+            onError={(e) => { e.currentTarget.src = DEFAULT_IMAGE }}
           />
           <Badge className={`absolute left-4 top-4 border ${typeColors[news.news_type || 'event']}`}>
             {typeLabels[news.news_type || 'event']}

@@ -47,6 +47,8 @@ const statusColors: Record<string, string> = {
   ended: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
 }
 
+const DEFAULT_POSTER = 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800'
+
 export default function EventsPage() {
   const [selectedType, setSelectedType] = useState('all')
   const [selectedCountry, setSelectedCountry] = useState('全部')
@@ -134,9 +136,10 @@ export default function EventsPage() {
                 <Card key={event.id} className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
                 <div className="relative aspect-video">
                   <img
-                    src={event.poster_image || 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800'}
+                    src={event.poster_image || DEFAULT_POSTER}
                     alt={event.title || ''}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => { e.currentTarget.src = DEFAULT_POSTER }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                   <Badge className={`absolute left-3 top-3 border ${statusColors[event.status || 'upcoming']}`}>

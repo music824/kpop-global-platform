@@ -113,6 +113,7 @@ export default function NewsPage() {
                       src={news.image_url || DEFAULT_IMAGE}
                       alt={news.title || ''}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => { e.currentTarget.src = DEFAULT_IMAGE }}
                     />
                     <Badge className={`absolute left-3 top-3 border ${typeColors[news.news_type || 'event']}`}>
                       {typeLabels[news.news_type || 'event']}

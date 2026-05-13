@@ -7,9 +7,14 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   fallback?: string
 }
 
+const DEFAULT_AVATAR = 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400'
+
 const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
   ({ className, src, alt, fallback, ...props }, ref) => {
     const [hasError, setHasError] = React.useState(false)
+
+    // Check if src is valid (not empty, not just whitespace)
+    const validSrc = src && src.trim() !== '' ? src : null
 
     return (
       <div
@@ -20,10 +25,10 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         )}
         {...props}
       >
-        {src && !hasError ? (
+        {validSrc && !hasError ? (
           <img
             className="aspect-square h-full w-full object-cover"
-            src={src}
+            src={validSrc}
             alt={alt || 'Avatar'}
             onError={() => setHasError(true)}
           />

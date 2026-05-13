@@ -150,6 +150,7 @@ export default function EventDetailPage() {
               src={event!.poster_image || DEFAULT_POSTER}
               alt={event!.title || ''}
               className="h-full w-full object-cover"
+              onError={(e) => { e.currentTarget.src = DEFAULT_POSTER }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <Badge className={`absolute left-4 top-4 border ${statusColors[event!.status || 'upcoming']}`}>
