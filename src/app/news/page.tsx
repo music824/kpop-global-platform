@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import useSWR from 'swr'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -44,6 +45,8 @@ const typeColors: Record<string, string> = {
   comeback: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
   event: 'bg-green-500/20 text-green-400 border-green-500/30',
 }
+
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800'
 
 export default function NewsPage() {
   const [selectedType, setSelectedType] = useState('all')
@@ -103,38 +106,40 @@ export default function NewsPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredNews.map((news) => (
-              <Card key={news.id} className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
-                <div className="relative aspect-video">
-                  <img
-                    src={news.image_url || ''}
-                    alt={news.title || ''}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <Badge className={`absolute left-3 top-3 border ${typeColors[news.news_type || 'event']}`}>
-                    {typeLabels[news.news_type || 'event']}
-                  </Badge>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-white group-hover:text-purple-400 transition-colors line-clamp-2">
-                    {news.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                    {news.summary}
-                  </p>
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span>{news.source}</span>
-                      <span>·</span>
-                      <span>{news.publish_date}</span>
+              <Link key={news.id} href={`/news/${news.id}`}>
+                <Card className="group cursor-pointer overflow-hidden border-border/50 bg-card/50 backdrop-blur hover:border-purple-500/50">
+                  <div className="relative aspect-video">
+                    <img
+                      src={news.image_url || DEFAULT_IMAGE}
+                      alt={news.title || ''}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <Badge className={`absolute left-3 top-3 border ${typeColors[news.news_type || 'event']}`}>
+                      {typeLabels[news.news_type || 'event']}
+                    </Badge>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-white group-hover:text-purple-400 transition-colors line-clamp-2">
+                      {news.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+                      {news.summary}
+                    </p>
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>{news.source}</span>
+                        <span>·</span>
+                        <span>{news.publish_date}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-1">
-                    {(news.tags || []).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="mt-3 flex flex-wrap gap-1">
+                      {(news.tags || []).map((tag) => (
+                        <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
