@@ -93,7 +93,7 @@ export default function ArtistsPage() {
                   {/* Avatar with Rank */}
                   <div className="relative mb-4">
                     <Avatar
-                      src={artist.profile_image || 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400'}
+                      src={artist.profile_image}
                       alt={artist.name_zh || artist.name_en || ''}
                       fallback={(artist.name_zh || artist.name_en || '?').charAt(0)}
                       className="h-28 w-28 mx-auto"
